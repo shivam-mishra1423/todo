@@ -1,0 +1,56 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Update Task{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0">✏️ Update Task</h4>
+            </div>
+            <div class="card-body">
+                <!-- ✅ FIXED: method="post" और csrf_token ADD किया -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" name="title" class="form-control" value="{{ task.title }}" required maxlength="200">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ task.description }}</textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Priority</label>
+                            <select name="priority" class="form-select">
+                                <option value="L" {% if task.priority == 'L' %}selected{% endif %}>Low</option>
+                                <option value="M" {% if task.priority == 'M' %}selected{% endif %}>Medium</option>
+                                <option value="H" {% if task.priority == 'H' %}selected{% endif %}>High</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" name="due_date" class="form-control" value="{{ task.due_date|date:'Y-m-d'|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="completed" class="form-check-input" id="completedCheck" {% if task.completed %}checked{% endif %}>
+                        <label class="form-check-label" for="completedCheck">Completed</label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning">✏️ Update Task</button>
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

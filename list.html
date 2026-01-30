@@ -1,0 +1,82 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}My Tasks{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>My Tasks</h2>
+        
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="card task-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title {% if task.completed %}completed{% endif %}">
+                                {{ task.title }}
+                                <span class="badge bg-{% if task.priority == 'H' %}danger{% elif task.priority == 'M' %}warning{% else %}info{% endif %}">
+                                    {{ task.get_priority_display }}
+                                </span>
+                                {% if task.completed %}
+                                <span class="badge bg-success">✓ Completed</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text">{{ task.description|truncatechars:100 }}</p>
+                            <small class="text-muted">
+                                Created: {{ task.created_at|date:"M d, Y" }}
+                                {% if task.due_date %}
+                                    | Due: {{ task.due_date|date:"M d, Y" }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div>
+                            <a href="{% url 'toggle_complete' task.pk %}" class="btn btn-sm btn-{% if task.completed %}secondary{% else %}success{% endif %}">
+                                {% if task.completed %}✓ Done{% else %}Mark Done{% endif %}
+                            </a>
+                            <a href="{% url 'update_task' task.pk %}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                            <a href="{% url 'delete_task' task.pk %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">
+                <h5>Welcome to Todo App! 🎉</h5>
+                <p>You don't have any tasks yet.</p>
+                <a href="{% url 'create_task' %}" class="btn btn-primary">Create your first task!</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📊 Stats</h5>
+                <div class="mb-3">
+                    <p>Total Tasks: <strong>{{ total_tasks }}</strong></p>
+                    <p>Completed: <strong class="text-success">{{ completed_count }}</strong></p>
+                    <p>Pending: <strong class="text-warning">{{ pending_count }}</strong></p>
+                </div>
+                
+                {% if not tasks %}
+                <div class="alert alert-warning">
+                    <small>Create your first task to get started!</small>
+                </div>
+                {% endif %}
+                
+                <a href="{% url 'create_task' %}" class="btn btn-primary w-100">➕ Add New Task</a>
+                
+                <hr>
+                
+                <h6>Quick Actions:</h6>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'create_task' %}" class="btn btn-outline-primary btn-sm">➕ Create Task</a>
+                    <a href="/admin/" class="btn btn-outline-secondary btn-sm">⚙️ Admin Panel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

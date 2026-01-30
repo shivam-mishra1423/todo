@@ -1,0 +1,51 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Delete Task{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Delete Task</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h5 class="alert-heading">⚠️ Warning!</h5>
+                    <p class="mb-0">Are you sure you want to delete this task? This action cannot be undone.</p>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ task.title }}</h5>
+                        <p class="card-text">{{ task.description|truncatechars:200 }}</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Priority: <span class="badge bg-{% if task.priority == 'H' %}danger{% elif task.priority == 'M' %}warning{% else %}info{% endif %}">
+                                    {{ task.get_priority_display }}
+                                </span>
+                            </small>
+                        </p>
+                        {% if task.due_date %}
+                        <p class="card-text">
+                            <small class="text-muted">Due: {{ task.due_date|date:"M d, Y" }}</small>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- ✅ FIXED: method="post" और csrf_token ADD किया -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            🗑️ Yes, Delete Permanently
+                        </button>
+                        <a href="{% url 'task_list' %}" class="btn btn-secondary">❌ Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
